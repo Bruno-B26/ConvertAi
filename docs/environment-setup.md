@@ -34,26 +34,39 @@ cp apps/web/.env.local.example apps/web/.env.local
 # Só tem NEXT_PUBLIC_API_URL — não precisa editar em dev
 ```
 
-### 3. Subir o banco de dados
+### 3. Subir tudo com um único comando
 
-```bash
-cd docker && docker compose up -d
-```
-
-- MongoDB disponível em `localhost:27018`
-- Mongo Express (UI do banco) em `http://localhost:8081`
-  - Login: `admin` / `admin` (configurado no docker/.env)
-
-### 4. Subir as aplicações
+Com Docker Desktop **aberto e rodando** (não basta estar instalado):
 
 ```bash
 # Da raiz do projeto:
-npm run dev
+npm run dev:full
 ```
 
-Isso sobe em paralelo:
+Isso faz `docker compose up -d` (sobe MongoDB + Mongo Express em background) e em
+seguida `npm run dev` (API + web em paralelo via `concurrently`):
+
+- **MongoDB** → `localhost:27018`
+- **Mongo Express** → `http://localhost:8081` (login `admin` / `admin`, configurado em `docker/.env`)
 - **API** → `http://localhost:3001/api`
 - **Web** → `http://localhost:3000`
+
+Alternativa manual, subindo cada peça separadamente:
+
+```bash
+cd docker && docker compose up -d   # sobe só o Mongo
+cd ..
+npm run dev                          # sobe só API + web
+```
+
+> **Troubleshooting — `EADDRINUSE` na API:** se a porta 3000 já estiver ocupada por
+> outro processo (ex.: um `next dev` esquecido de uma sessão anterior), o Next.js sobe
+> automaticamente na 3001 — a mesma porta da API — e a API falha ao subir. Descubra e
+> encerre o processo antigo antes de rodar `npm run dev:full` de novo:
+> ```powershell
+> Get-NetTCPConnection -LocalPort 3000 -State Listen | Select OwningProcess
+> Stop-Process -Id <PID> -Force
+> ```
 
 ## Portas em uso
 
@@ -100,6 +113,9 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ## Comandos Úteis
 
 ```bash
+# Subir Mongo + API + web com um comando (Docker Desktop precisa estar aberto)
+npm run dev:full
+
 # Rodar só a API
 npm run dev -w apps/api
 

@@ -22,11 +22,15 @@ ConvertAI/
 ## Comandos Raiz
 
 ```bash
-npm run dev          # sobe api (3001) + web (3000) em paralelo
+npm run dev:full     # comando único: sobe Docker (Mongo) + api (3001) + web (3000)
+npm run dev          # sobe só api (3001) + web (3000) em paralelo, sem tocar no Docker
 npm run build        # build de todos os workspaces
 npm run lint         # lint de todos os workspaces
 npm run test         # testes de todos os workspaces
 ```
+
+`dev:full` exige Docker Desktop **aberto** (não só instalado). Detalhes e troubleshooting
+em `docs/environment-setup.md`.
 
 Para um workspace só: `npm run dev -w apps/api` ou `npm run dev -w apps/web`.
 
