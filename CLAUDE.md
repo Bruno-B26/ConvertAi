@@ -1,32 +1,53 @@
-# CLAUDE.md
+# CLAUDE.md — ConvertAI
 
-## Monorepo Overview
+## O que é este projeto
 
-This is an npm workspaces monorepo with two apps:
+**ConvertAI** é um SaaS B2B/B2C de prospecção automatizada de leads via WhatsApp.
+O usuário define filtros (CNAE, localização, porte), o sistema busca leads, o usuário
+revisa e aprova, configura uma campanha de disparo e acompanha resultados num dashboard.
 
-- **apps/web** — Next.js frontend (App Router)
-- **apps/api** — NestJS backend (REST API)
+Toda integração externa (busca de leads, disparo de WhatsApp) é orquestrada pelo **n8n**
+via webhooks — o backend nunca chama APIs externas diretamente.
 
-Each app has its **own `CLAUDE.md`** and **`.claude/rules/`** with detailed conventions for that app.
+## Estrutura do Monorepo
 
-## Root Commands
-
-```bash
-npm run dev        # run both apps in parallel (concurrently)
-npm run build      # build all workspaces
-npm run lint       # lint all workspaces
-npm run test       # test all workspaces
+```
+ConvertAI/
+├── apps/api/        # NestJS — REST API + lógica de negócio
+├── apps/web/        # Next.js 15 App Router — frontend
+├── docker/          # docker-compose (MongoDB 7 + Mongo Express)
+└── docs/            # documentação técnica detalhada
 ```
 
-## Where to Find Detailed Rules
+## Comandos Raiz
 
-- Working on the **frontend**? Read `apps/web/CLAUDE.md`
-- Working on the **backend**? Read `apps/api/CLAUDE.md`
+```bash
+npm run dev          # sobe api (3001) + web (3000) em paralelo
+npm run build        # build de todos os workspaces
+npm run lint         # lint de todos os workspaces
+npm run test         # testes de todos os workspaces
+```
 
-Do **not** duplicate app-specific rules here. This file only covers monorepo-level concerns.
+Para um workspace só: `npm run dev -w apps/api` ou `npm run dev -w apps/web`.
 
-## Golden Rules
+## Regras de Ouro
 
-1. Run commands from the **repo root** — npm workspaces handles routing to the correct app.
-2. To target a single app: `npm run dev -w apps/web` or `npm run dev -w apps/api`.
-3. Do not commit `node_modules/`, `.next/`, `dist/`, `.env`, or `.env.local`.
+1. Rode comandos da **raiz do repo** — npm workspaces roteia para o app certo.
+2. Backend **nunca** chama APIs externas diretamente. Toda integração passa pelo n8n via webhook.
+3. Cada feature nova: uma branch, um PR, nunca misturar features no mesmo PR.
+4. Não commitar `.env`, `.env.local`, `node_modules/`, `.next/`, `dist/`.
+
+## Documentação Detalhada
+
+Leia antes de implementar qualquer feature:
+
+@docs/product-context.md
+@docs/data-model.md
+@docs/api-routes.md
+@docs/development-roadmap.md
+@docs/environment-setup.md
+
+## Onde Estão as Regras de Código
+
+- Backend (NestJS) → `apps/api/.claude/CLAUDE.md`
+- Frontend (Next.js) → `apps/web/.claude/rules/CLAUDE.md`
