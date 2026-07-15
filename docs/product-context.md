@@ -57,6 +57,7 @@ Backend  ◄─── webhook IN  ────  n8n
 | Busca de leads          | N8N_LEAD_SEARCH_WEBHOOK_URL      | `{ correlationId, accountId, filters }`       |
 | Início de disparo       | N8N_DISPATCH_WEBHOOK_URL         | `{ correlationId, accountId, leads, config }` |
 | Conectar WhatsApp       | N8N_WHATSAPP_CONNECT_WEBHOOK_URL | `{ accountId, callbackUrl }`                  |
+| Recuperação de senha    | N8N_PASSWORD_RESET_WEBHOOK_URL   | `{ email, name, resetUrl }`                   |
 
 ### Webhooks que o backend RECEBE (entrada)
 

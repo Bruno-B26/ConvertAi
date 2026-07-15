@@ -46,6 +46,7 @@ Leia antes de implementar qualquer feature:
 @docs/api-routes.md
 @docs/development-roadmap.md
 @docs/environment-setup.md
+@docs/auth.md
 
 ## Onde Estão as Regras de Código
 

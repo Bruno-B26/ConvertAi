@@ -2,8 +2,10 @@
 
 ## Status Atual
 
-**Fase 1 concluída.** A estrutura geral está pronta e rodando. Ambas as apps
-compilam e sobem sem erros. O banco de dados está containerizado.
+**Fases 1 e 2 concluídas.** A estrutura geral está pronta e rodando, e o fluxo completo
+de autenticação (registro, login, recuperação/redefinição de senha, logout) está
+implementado em backend e frontend. Ambas as apps compilam e sobem sem erros. O banco
+de dados está containerizado.
 
 ---
 
@@ -36,30 +38,30 @@ O que foi feito:
 
 ---
 
-## Fase 2 — Autenticação
+## Fase 2 — Autenticação ✅ CONCLUÍDA
 
-**Pré-requisito para tudo. Implementar primeiro.**
+**Pré-requisito para tudo. Implementado primeiro.**
 
 ### Backend (`modules/auth` + `modules/accounts` + `modules/users`)
 
-- [ ] `Account` schema + repository
-- [ ] `User` schema + repository
-- [ ] `POST /auth/register` — cria Account + User (owner), retorna JWT
-- [ ] `POST /auth/login` — valida senha, retorna JWT
-- [ ] `GET /auth/me` — retorna dados do usuário logado
-- [ ] `POST /auth/forgot-password` — gera token, envia email
-- [ ] `POST /auth/reset-password` — valida token, troca senha
-- [ ] `GET /accounts/me` — dados da account do usuário logado
-- [ ] `PATCH /accounts/me` — atualizar nome/settings
+- [x] `Account` schema + repository
+- [x] `User` schema + repository
+- [x] `POST /auth/register` — cria Account + User (owner), retorna JWT
+- [x] `POST /auth/login` — valida senha, retorna JWT
+- [x] `GET /auth/me` — retorna dados do usuário logado
+- [x] `POST /auth/forgot-password` — gera token, dispara webhook ao n8n para envio do email
+- [x] `POST /auth/reset-password` — valida token, troca senha
+- [x] `GET /accounts/me` — dados da account do usuário logado
+- [x] `PATCH /accounts/me` — atualizar nome/settings
 
 ### Frontend (`features/auth`)
 
-- [ ] Tela de login (`app/(auth)/login/page.tsx`)
-- [ ] Tela de registro (`app/(auth)/register/page.tsx`)
-- [ ] Tela de recuperação de senha (`app/(auth)/forgot-password/page.tsx`)
-- [ ] Hook `useAuth` + serviço `auth-api.ts`
-- [ ] Armazenar JWT no cookie `access_token` após login
-- [ ] Logout (apagar cookie, redirecionar para /login)
+- [x] Tela de login (`app/(auth)/login/page.tsx`)
+- [x] Tela de registro (`app/(auth)/register/page.tsx`)
+- [x] Tela de recuperação de senha (`app/(auth)/forgot-password/page.tsx` + `reset-password/page.tsx`)
+- [x] Hook `useAuth` + serviço `auth-api.ts`
+- [x] Armazenar JWT no cookie `access_token` após login
+- [x] Logout (apagar cookie, redirecionar para /login)
 
 ---
 

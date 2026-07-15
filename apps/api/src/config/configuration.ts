@@ -11,5 +11,6 @@ export default () => ({
     leadSearchWebhookUrl: process.env.N8N_LEAD_SEARCH_WEBHOOK_URL,
     dispatchWebhookUrl: process.env.N8N_DISPATCH_WEBHOOK_URL,
     whatsappConnectWebhookUrl: process.env.N8N_WHATSAPP_CONNECT_WEBHOOK_URL,
+    passwordResetWebhookUrl: process.env.N8N_PASSWORD_RESET_WEBHOOK_URL,
   },
 });
