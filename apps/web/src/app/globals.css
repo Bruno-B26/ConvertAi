@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  [data-theme="signal"] {
+    /* accent (verde-sinal) */
+    --accent: oklch(78% 0.19 150);
+    --accent-hover: oklch(84% 0.19 150);
+    --accent-soft: oklch(30% 0.06 150);
+    --accent-text-on: oklch(15% 0.03 150);
+
+    /* backgrounds */
+    --bg: oklch(19% 0.014 250);
+    --surface: oklch(24% 0.016 250);
+    --surface-raised: oklch(28% 0.018 250);
+
+    /* text */
+    --text-1: oklch(96% 0.01 150);
+    --text-2: oklch(80% 0.015 150);
+    --text-3: oklch(62% 0.02 150);
+    --text-inverse: oklch(19% 0.014 250);
+
+    /* borders */
+    --border: oklch(34% 0.02 250);
+    --border-strong: oklch(44% 0.025 250);
+
+    /* state */
+    --success: oklch(78% 0.19 150);
+    --success-soft: oklch(30% 0.06 150);
+    --danger: oklch(68% 0.19 25);
+    --danger-soft: oklch(32% 0.07 25);
+    --warning: oklch(75% 0.15 85);
+
+    /* radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 999px;
+
+    /* shadows */
+    --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
+    --shadow-md: 0 12px 32px oklch(0% 0 0 / 0.45);
+    --shadow-focus: 0 0 0 3px oklch(78% 0.19 150 / 0.35), 0 0 24px oklch(78% 0.19 150 / 0.25);
+  }
+}
