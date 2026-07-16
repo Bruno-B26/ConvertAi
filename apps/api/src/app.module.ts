@@ -1,5 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import configuration from './config/configuration';
 import { DatabaseModule } from './database/database.module';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -17,6 +19,9 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
       isGlobal: true,
       load: [configuration],
     }),
+    // Limite global (aplicado a toda rota que não tiver @Throttle próprio):
+    // generoso o bastante para não atrapalhar polling do dashboard/QR code.
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 120 }]),
     DatabaseModule,
     AuthModule,
     AccountsModule,
@@ -26,6 +31,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
     DispatchesModule,
     WebhooksModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
