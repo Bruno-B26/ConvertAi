@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import { ApiError } from '@/lib/api-client';
 import { useForgotPassword } from '../hooks/use-auth';
 
 const forgotPasswordSchema = z.object({
@@ -12,8 +14,32 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
+const THROTTLE_TTL = 60; // segundos — mesmo TTL configurado no backend (limite 3/min)
+
 export function ForgotPasswordForm() {
   const { mutate, isPending, isSuccess, error } = useForgotPassword();
+  const [countdown, setCountdown] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const isThrottled = error instanceof ApiError && error.statusCode === 429;
+
+  useEffect(() => {
+    if (isThrottled) {
+      setCountdown(THROTTLE_TTL);
+      timerRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isThrottled, error]);
 
   const {
     register,
@@ -22,6 +48,8 @@ export function ForgotPasswordForm() {
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
+
+  const blocked = isThrottled && countdown > 0;
 
   return (
     <div className="w-full rounded-2xl bg-[#161616] border border-white/10 p-8 shadow-2xl">
@@ -57,16 +85,32 @@ export function ForgotPasswordForm() {
 
           {error && (
             <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
-              {error.message}
+              {isThrottled ? (
+                countdown > 0 ? (
+                  <>
+                    Muitas tentativas. Aguarde{' '}
+                    <span className="font-semibold tabular-nums">{countdown}s</span>{' '}
+                    para tentar novamente.
+                  </>
+                ) : (
+                  'Você já pode tentar novamente.'
+                )
+              ) : (
+                error.message
+              )}
             </div>
           )}
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || blocked}
             className="w-full rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-black hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-[#161616] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isPending ? 'Enviando...' : 'Enviar instruções'}
+            {isPending
+              ? 'Enviando...'
+              : blocked
+                ? `Aguarde ${countdown}s`
+                : 'Enviar instruções'}
           </button>
         </form>
       )}

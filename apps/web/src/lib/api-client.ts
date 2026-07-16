@@ -4,6 +4,16 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
 }
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode: number,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export async function apiClient<T>(
   path: string,
   options: RequestOptions = {},
@@ -22,10 +32,10 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(
+    const message =
       (error as { message?: string }).message ??
-        `Requisição falhou: ${response.status}`,
-    );
+      `Requisição falhou: ${response.status}`;
+    throw new ApiError(message, response.status);
   }
 
   return response.json() as Promise<T>;
