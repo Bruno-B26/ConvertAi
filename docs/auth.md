@@ -73,6 +73,27 @@ e-mail de fato é o n8n.
   `reset-password/page.tsx` é `async` e lê `token` de `searchParams` (que no Next 15 é
   uma `Promise`), repassando como prop para o client component do formulário.
 
+### Layout e design das telas de auth
+
+O layout `app/(auth)/layout.tsx` implementa um **split-screen de duas colunas**:
+
+- **Coluna esquerda** (oculta em mobile, `hidden lg:flex`) — painel hero com fundo
+  `#0d0d0d`, grid verde sutil via `backgroundImage` inline, logo, badge, headline
+  em branco, subtexto cinza e métrica social em verde.
+- **Coluna direita** — área de formulário centralizada. Em mobile ocupa a tela toda e
+  exibe o logo no topo.
+
+Todos os formulários de auth (`login-form`, `register-form`, `forgot-password-form`,
+`reset-password-form`) seguem o mesmo card escuro. Os tokens de cor e as classes de
+input/botão padrão estão documentados em `apps/web/.claude/rules/design-system.md`.
+
+### Correção de bug no logout (`use-auth.ts`)
+
+O hook `useLogout` usa `onSettled` (não `onSuccess`). Motivo: se o request
+`POST /auth/logout` falhar por qualquer razão (rede, timeout), `onSuccess` nunca
+dispararia e o usuário ficaria preso com o cache sujo. Com `onSettled`, o cache é
+sempre limpo e o redirect para `/login` sempre acontece.
+
 ## Como testar localmente (sem n8n rodando)
 
 Não há instância de n8n no ambiente de dev, então pra exercitar o fluxo de recuperação de

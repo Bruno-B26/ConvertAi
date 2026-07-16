@@ -56,13 +56,21 @@ import type { User } from '../types/user';
 - **Don't write inline `style={{ ... }}`** unless the value is truly dynamic (e.g. a calculated width).
 - **Long class lists are fine.** That's how Tailwind works — don't try to extract them prematurely.
 - **For repeated patterns (3+ uses), extract a component**, not a CSS class. Example: a `Button` component with built-in styles.
-- **Custom colors and fonts** go in `tailwind.config.ts`. Never use arbitrary values like `text-[#FF5733]` for brand colors.
-- **The only CSS file** is `src/app/globals.css`, which only contains:
+- **Custom colors and fonts** go in `tailwind.config.ts`. Never use arbitrary values like `text-[#FF5733]` for brand colors — **exception**: the dark theme palette defined in `apps/web/.claude/rules/design-system.md` uses approved arbitrary values (`#0d0d0d`, `#161616`, `#1e1e1e`) until they are promoted to named tokens in `tailwind.config.ts`.
+- **The only CSS file** is `src/app/globals.css`. It contains the Tailwind directives and a `@layer base` block that applies the dark background globally:
   ```css
   @tailwind base;
   @tailwind components;
   @tailwind utilities;
+
+  @layer base {
+    html,
+    body {
+      @apply bg-[#0d0d0d];
+    }
+  }
   ```
+  Do not add anything else to this file.
 
 ## Environment Variables
 

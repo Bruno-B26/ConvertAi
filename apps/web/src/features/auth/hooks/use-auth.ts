@@ -45,7 +45,8 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: authApi.logout,
-    onSuccess: () => {
+    onSettled: () => {
+      // Limpa estado local independentemente de sucesso ou erro no backend
       queryClient.clear();
       router.push('/login');
     },
