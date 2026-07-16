@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Tema escuro (padrão) ── */
   [data-theme="signal"] {
     /* accent (verde-sinal) */
     --accent: oklch(78% 0.19 150);
@@ -42,5 +43,41 @@
     --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
     --shadow-md: 0 12px 32px oklch(0% 0 0 / 0.45);
     --shadow-focus: 0 0 0 3px oklch(78% 0.19 150 / 0.35), 0 0 24px oklch(78% 0.19 150 / 0.25);
+  }
+
+  /* ── Tema claro ── */
+  [data-theme="signal"][data-mode="light"] {
+    /* accent mantém o verde */
+    --accent: oklch(52% 0.18 150);
+    --accent-hover: oklch(46% 0.18 150);
+    --accent-soft: oklch(93% 0.06 150);
+    --accent-text-on: oklch(99% 0 0);
+
+    /* backgrounds */
+    --bg: oklch(97% 0.005 250);
+    --surface: oklch(100% 0 0);
+    --surface-raised: oklch(95% 0.006 250);
+
+    /* text */
+    --text-1: oklch(18% 0.01 250);
+    --text-2: oklch(38% 0.015 250);
+    --text-3: oklch(56% 0.015 250);
+    --text-inverse: oklch(97% 0.005 250);
+
+    /* borders */
+    --border: oklch(88% 0.01 250);
+    --border-strong: oklch(76% 0.015 250);
+
+    /* state */
+    --success: oklch(52% 0.18 150);
+    --success-soft: oklch(93% 0.06 150);
+    --danger: oklch(55% 0.19 25);
+    --danger-soft: oklch(95% 0.05 25);
+    --warning: oklch(62% 0.15 85);
+
+    /* shadows */
+    --shadow-sm: 0 1px 3px oklch(0% 0 0 / 0.08);
+    --shadow-md: 0 8px 24px oklch(0% 0 0 / 0.12);
+    --shadow-focus: 0 0 0 3px oklch(52% 0.18 150 / 0.25), 0 0 16px oklch(52% 0.18 150 / 0.15);
   }
 }

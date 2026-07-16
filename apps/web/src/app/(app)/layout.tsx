@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/layout/sidebar';
+import { Topbar } from '@/components/layout/topbar';
 
 export default function AppLayout({
   children,
@@ -6,10 +6,8 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-bg">
-      <aside className="w-64 shrink-0 bg-surface border-r border-border">
-        <Sidebar />
-      </aside>
+    <div className="flex flex-col min-h-screen bg-bg">
+      <Topbar />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );
