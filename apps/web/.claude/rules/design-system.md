@@ -145,6 +145,92 @@ O logo é inline no JSX (sem imagem externa):
 
 ---
 
+## Tratamento de erros de API
+
+### ApiError
+
+Todo erro lançado pelo `apiClient` (`src/lib/api-client.ts`) é uma instância de
+`ApiError`, que estende `Error` e expõe o `statusCode` HTTP:
+
+```ts
+import { ApiError } from '@/lib/api-client';
+
+// Verificar o status dentro de um handler de mutação ou no render:
+if (error instanceof ApiError && error.statusCode === 422) {
+  // campo inválido
+}
+if (error instanceof ApiError && error.statusCode === 429) {
+  // rate limit — ver padrão de countdown abaixo
+}
+```
+
+**Nunca** inspecione `error.message` para inferir o status HTTP. Use `statusCode`.
+
+### Botão bloqueado por rate limit (429)
+
+Quando uma rota tem throttle no backend e o usuário excede o limite, exiba uma contagem
+regressiva e desabilite o botão. Use o padrão abaixo — copie para qualquer formulário
+que precisar desse comportamento:
+
+```tsx
+const THROTTLE_TTL = 60; // deve bater com o ttl configurado no @Throttle() da rota
+
+const isThrottled = error instanceof ApiError && error.statusCode === 429;
+const [countdown, setCountdown] = useState(0);
+const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+useEffect(() => {
+  if (isThrottled) {
+    setCountdown(THROTTLE_TTL);
+    timerRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) { clearInterval(timerRef.current!); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+  return () => { if (timerRef.current) clearInterval(timerRef.current); };
+}, [isThrottled, error]);
+
+const blocked = isThrottled && countdown > 0;
+```
+
+Renderização do banner e do botão:
+
+```tsx
+{error && (
+  <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+    {isThrottled ? (
+      countdown > 0
+        ? <>Muitas tentativas. Aguarde <span className="font-semibold tabular-nums">{countdown}s</span> para tentar novamente.</>
+        : 'Você já pode tentar novamente.'
+    ) : (
+      error.message
+    )}
+  </div>
+)}
+
+<button disabled={isPending || blocked} ...>
+  {isPending ? 'Carregando...' : blocked ? `Aguarde ${countdown}s` : 'Confirmar'}
+</button>
+```
+
+> `tabular-nums` mantém a largura do número estável enquanto ele decrementa, evitando
+> que o layout "pule".
+
+### TTLs de rate limit por rota de auth
+
+| Rota                       | Limite | TTL  | `THROTTLE_TTL` no form |
+|----------------------------|--------|------|------------------------|
+| `POST /auth/login`         | 5/min  | 60 s | `60`                   |
+| `POST /auth/register`      | 5/min  | 60 s | `60`                   |
+| `POST /auth/forgot-password` | 3/min | 60 s | `60`                  |
+| `POST /auth/reset-password` | 5/min | 60 s | `60`                   |
+
+Se o backend alterar um TTL, atualizar a constante correspondente no formulário.
+
+---
+
 ## Globals CSS
 
 `src/app/globals.css` define o fundo padrão no nível do `html`/`body` para evitar
