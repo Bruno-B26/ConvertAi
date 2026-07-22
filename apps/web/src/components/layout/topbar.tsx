@@ -7,6 +7,9 @@ import { useMe, useLogout } from '@/features/auth/hooks/use-auth';
 import { useTheme } from '@/providers/theme-provider';
 
 const NAV_ITEMS = [
+  { href: '/buscar', label: 'Buscar' },
+  { href: '/aprovacao', label: 'Aprovação' },
+  { href: '/campaigns', label: 'Campanhas' },
   { href: '/dashboard', label: 'Painel' },
 ];
 
